@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Conjunta - PortoEx | Captação de Fretes</title>
+<style>
+  :root{
+    --navy:#16233f; --navy-2:#1e3157; --navy-3:#26406e;
+    --orange:#f05a28; --orange-2:#ff7a45;
+    --bg:#f4f6fa; --card:#ffffff; --line:#e3e8f0;
+    --text:#1d2839; --muted:#6b7688;
+    --shadow:0 2px 10px rgba(22,35,63,.08);
+    --blue:#3b82f6; --sky:#0ea5e9; --purple:#8b5cf6; --teal:#14b8a6; --green:#1f9d55; --pink:#ec4899; --amber:#f59e0b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  button{font-family:inherit;cursor:pointer}
+  header{background:var(--navy);color:#fff;padding:12px 22px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 12px rgba(0,0,0,.15);position:sticky;top:0;z-index:50;flex-wrap:wrap}
+  header img{height:44px;background:#fff;padding:5px 10px;border-radius:8px}
+  header .titles h1{font-size:17px;font-weight:700;letter-spacing:.3px}
+  header .titles p{font-size:12px;color:#a9b6cf}
+  header .spacer{flex:1}
+  .op-bar{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);padding:6px 8px 6px 12px;border-radius:10px}
+  .op-bar .lbl{font-size:11px;color:#a9b6cf;text-transform:uppercase;letter-spacing:.4px;font-weight:600}
+  .op-bar select{background:#fff;border:none;border-radius:7px;padding:7px 9px;font-size:13px;font-weight:600;color:var(--navy);max-width:170px}
+  .op-bar button{background:var(--orange);border:none;color:#fff;border-radius:7px;padding:7px 11px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:5px}
+  .op-bar button:hover{background:var(--orange-2)}
+  .cloud{display:flex;align-items:center;gap:6px}
+  .cloud .badge{font-size:11px;font-weight:700;padding:5px 10px;border-radius:20px;display:flex;align-items:center;gap:5px}
+  .cloud .badge.on{background:rgba(31,157,85,.2);color:#8ff0bb}
+  .cloud .badge.off{background:rgba(245,158,11,.18);color:#ffd98a}
+  .cloud .badge.err{background:rgba(229,72,77,.2);color:#ff9ea1}
+  .cloud .sync{background:rgba(255,255,255,.12);border:none;color:#fff;width:32px;height:32px;border-radius:8px;font-size:16px}
+  .cloud .sync:hover{background:rgba(255,255,255,.25)}
+  .cloud .sync.spin{animation:sp 1s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .stat{text-align:right;font-size:11px;color:#a9b6cf}
+  .stat b{display:block;font-size:20px;color:var(--orange-2);font-weight:700}
+  .wrap{display:flex;gap:18px;padding:18px 22px;align-items:flex-start;max-width:1520px;margin:0 auto}
+  .sidebar{width:295px;flex-shrink:0;position:sticky;top:88px}
+  .main{flex:1;min-width:0}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);margin-bottom:16px}
+  .panel h3{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--navy);padding:13px 16px 8px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .panel h3 .ic{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0}
+  .panel .body{padding:6px 16px 16px}
+  .searchbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  .searchbar input{flex:1;min-width:220px;padding:12px 16px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#fff;box-shadow:var(--shadow)}
+  .searchbar input:focus{outline:none;border-color:var(--orange)}
+  .btn{border:none;border-radius:10px;padding:12px 18px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+  .btn-primary{background:var(--orange);color:#fff}.btn-primary:hover{background:var(--orange-2)}
+  .btn-nav{background:var(--navy);color:#fff}.btn-nav:hover{background:var(--navy-3)}
+  .btn-ghost{background:#eef1f7;color:var(--navy)}.btn-ghost:hover{background:#e0e6f0}
+  .btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#178a49}
+  .vtype-group{margin-bottom:4px}
+  .vtype-group>.g-head{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding:8px 4px 4px}
+  .vtype{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:13px;transition:.12s}
+  .vtype:hover{background:#f0f3f9}
+  .vtype.active{background:var(--navy);color:#fff}
+  .vtype .cnt{margin-left:auto;font-size:11px;background:#eef1f7;color:var(--muted);padding:1px 7px;border-radius:20px}
+  .vtype.active .cnt{background:var(--orange);color:#fff}
+  .vtype .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .alpha{display:flex;flex-wrap:wrap;gap:4px}
+  .alpha button{width:29px;height:29px;border:1px solid var(--line);background:#fff;border-radius:7px;font-weight:700;font-size:13px}
+  .alpha button:hover{border-color:var(--orange)}
+  .alpha button.active{background:var(--navy)!important;color:#fff!important;border-color:var(--navy)}
+  .alpha button.empty{opacity:.28;cursor:default;color:#9aa4b5!important}
+  select.filt{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:#fff;margin-top:4px}
+  select.filt:focus{outline:none;border-color:var(--orange)}
+  label.fl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px 10px 5px 12px;font-size:12px;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow)}
+  .chip b{color:var(--navy)}
+  .chip button{border:none;background:#e6ebf3;width:17px;height:17px;border-radius:50%;color:var(--muted);font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center}
+  .chip button:hover{background:var(--orange);color:#fff}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(315px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:9px;transition:.15s}
+  .card:hover{box-shadow:0 6px 18px rgba(22,35,63,.14);transform:translateY(-1px)}
+  .card .top{display:flex;gap:12px;align-items:flex-start}
+  .avatar{width:44px;height:44px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;flex-shrink:0}
+  .card .name{font-weight:700;font-size:15px;color:var(--navy);line-height:1.2}
+  .card .company{font-size:12px;color:var(--muted);margin-top:2px}
+  .badges{display:flex;flex-wrap:wrap;gap:5px}
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;color:#fff}
+  .badge.outline{background:#fff;border:1.5px solid;}
+  .card .rows{display:flex;flex-direction:column;gap:6px;font-size:13px}
+  .card .row{display:flex;align-items:center;gap:8px;color:var(--text)}
+  .card .row svg{flex-shrink:0;color:var(--orange)}
+  .card .row a{color:var(--text);text-decoration:none}.card .row a:hover{color:var(--orange)}
+  .card .note{font-size:12px;color:var(--muted);background:#f7f9fc;border-radius:8px;padding:7px 10px;border-left:3px solid var(--orange)}
+  .card .actions{display:flex;gap:6px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)}
+  .card .actions button{flex:1;background:#f0f3f9;border:none;border-radius:7px;padding:7px;font-size:12px;font-weight:600;color:var(--navy);display:flex;align-items:center;justify-content:center;gap:5px}
+  .card .actions button:hover{background:var(--navy);color:#fff}
+  .card .actions button.wa{background:#e7f9ee;color:#0f7a3d}
+  .card .actions button.wa:hover{background:#25d366;color:#fff}
+  .card .actions button.del:hover{background:#e5484d}
+  .empty{text-align:center;padding:70px 20px;color:var(--muted)}
+  .empty svg{opacity:.35;margin-bottom:14px}
+  .empty h4{font-size:16px;color:var(--navy);margin-bottom:6px}
+  .overlay{position:fixed;inset:0;background:rgba(22,35,63,.55);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:34px 16px;overflow:auto}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:14px;width:100%;max-width:600px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal.wide{max-width:740px}
+  .m-head{background:var(--navy);color:#fff;padding:15px 20px;border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between}
+  .m-head h3{font-size:16px}
+  .m-head button.x{background:rgba(255,255,255,.15);border:none;color:#fff;width:30px;height:30px;border-radius:8px;font-size:18px}
+  .m-head button.x:hover{background:var(--orange)}
+  .m-body{padding:20px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-grid .full{grid-column:1/-1}
+  .fg label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:4px}
+  .fg input,.fg select,.fg textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit}
+  .fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--orange)}
+  .fg textarea{resize:vertical;min-height:70px}
+  .m-foot{display:flex;gap:10px;justify-content:flex-end;padding:0 20px 20px}
+  .dropzone{border:2px dashed var(--navy-3);border-radius:12px;padding:32px 20px;text-align:center;background:#f7f9fc;transition:.15s;cursor:pointer}
+  .dropzone.drag{background:#eef3ff;border-color:var(--orange)}
+  .dropzone svg{color:var(--navy-3);margin-bottom:10px}
+  .dropzone h4{color:var(--navy);font-size:15px;margin-bottom:5px}
+  .dropzone p{color:var(--muted);font-size:12px}
+  .fmt-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+  .fmt-tags span{background:#fff;border:1px solid var(--line);border-radius:20px;padding:3px 10px;font-size:11px;color:var(--navy);font-weight:600}
+  .import-help{margin-top:16px;font-size:12px;color:var(--muted);line-height:1.6;background:#f7f9fc;border-radius:10px;padding:14px 16px}
+  .import-help b{color:var(--navy)}
+  .preview-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:14px}
+  .preview-table th{background:var(--navy);color:#fff;padding:7px 9px;text-align:left;font-weight:600;position:sticky;top:0}
+  .preview-table td{padding:6px 9px;border-bottom:1px solid var(--line)}
+  .preview-wrap{max-height:230px;overflow:auto;border:1px solid var(--line);border-radius:8px;margin-top:12px}
+  .sec-title{font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.4px;margin:6px 0 10px;display:flex;align-items:center;gap:8px}
+  .cloud-box{background:#f7f9fc;border:1px solid var(--line);border-radius:11px;padding:14px 16px;margin-bottom:20px}
+  .cloud-box .st{font-size:12px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .cloud-box .dotst{width:10px;height:10px;border-radius:50%}
+  .cloud-box input{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:12px;font-family:monospace;margin-bottom:8px}
+  .cloud-box .row2{display:flex;gap:8px;flex-wrap:wrap}
+  .cloud-box .row2 button{flex:1;min-width:120px;padding:9px;border-radius:8px;font-size:13px;font-weight:600;border:none}
+  .cloud-box small{display:block;margin-top:9px;color:var(--muted);font-size:11px;line-height:1.5}
+  .op-list,.msg-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+  .op-item{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;padding:9px 12px;flex-wrap:wrap}
+  .op-item .av{width:30px;height:30px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+  .op-item .nm{font-weight:600;flex:1}
+  .op-item.act{border-color:var(--orange);background:#fff7f3}
+  .op-item .mini{background:#f0f3f9;border:none;border-radius:6px;padding:5px 9px;font-size:12px;font-weight:600;color:var(--navy)}
+  .op-item .mini:hover{background:var(--navy);color:#fff}
+  .op-item .mini.dl:hover{background:#e5484d}
+  .msg-card{border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .msg-card .mh{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+  .msg-card .mt{font-weight:700;color:var(--navy);flex:1}
+  .msg-card .tags{display:flex;gap:5px;flex-wrap:wrap}
+  .msg-card .tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff}
+  .msg-card .tx{font-size:12.5px;color:var(--text);white-space:pre-wrap;background:#f7f9fc;border-radius:7px;padding:8px 10px;margin-top:4px}
+  .msg-card .mact{display:flex;gap:6px;margin-top:8px}
+  .msg-card .mact button{background:#f0f3f9;border:none;border-radius:6px;padding:5px 11px;font-size:12px;font-weight:600;color:var(--navy)}
+  .msg-card .mact button:hover{background:var(--navy);color:#fff}
+  .msg-card .mact button.dl:hover{background:#e5484d}
+  .ph-hint{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
+  .ph-hint code{background:#eef1f7;padding:1px 5px;border-radius:4px;color:var(--navy);cursor:pointer;font-size:11px}
+  .ph-hint code:hover{background:var(--orange);color:#fff}
+  .wa-msg{border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;transition:.12s;margin-bottom:9px}
+  .wa-msg:hover{border-color:#25d366;background:#f2fdf6}
+  .wa-msg .wh{display:flex;align-items:center;gap:8px;margin-bottom:5px;flex-wrap:wrap}
+  .wa-msg .wt{font-weight:700;color:var(--navy);flex:1}
+  .wa-msg .wp{font-size:12.5px;color:var(--muted);white-space:pre-wrap;line-height:1.45}
+  .wa-msg .match{font-size:9.5px;font-weight:700;background:var(--green);color:#fff;padding:2px 7px;border-radius:20px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:13px 22px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:200;font-size:14px;display:none;align-items:center;gap:9px}
+  .toast.show{display:flex}.toast.ok{background:var(--green)}.toast.err{background:#e5484d}
+  .caps{display:flex;flex-wrap:wrap;gap:5px}
+  .cap{font-size:11px;font-weight:600;background:#eef3ff;color:var(--navy-3);border:1px solid #dbe4f5;border-radius:7px;padding:3px 8px}
+  .sheet-wrap{overflow:auto;max-height:68vh;border:1px solid var(--line);border-radius:8px}
+  table.sheet{border-collapse:separate;border-spacing:0;font-size:12.5px;width:100%;min-width:1300px}
+  table.sheet th{position:sticky;top:0;background:var(--navy);color:#fff;padding:9px 8px;text-align:left;font-weight:600;white-space:nowrap;z-index:3;border-right:1px solid rgba(255,255,255,.1)}
+  table.sheet td{border-bottom:1px solid var(--line);padding:1px;vertical-align:middle}
+  table.sheet tbody tr:nth-child(even){background:#fafbfe}
+  table.sheet tbody tr:hover{background:#f0f6ff}
+  table.sheet input,table.sheet select{width:100%;border:1px solid transparent;background:transparent;padding:7px 7px;font-size:12.5px;font-family:inherit;border-radius:5px;color:inherit}
+  table.sheet input:focus,table.sheet select:focus{outline:none;border-color:var(--orange);background:#fff;box-shadow:0 0 0 2px rgba(240,90,40,.12)}
+  table.sheet input:hover,table.sheet select:hover{background:#fff;border-color:var(--line)}
+  table.sheet td.cnome input{font-weight:700;color:var(--navy)}
+  table.sheet td.cnum input{text-align:right}
+  table.sheet td.cdel,table.sheet td.csel,table.sheet th.csel{text-align:center;padding:1px 3px}
+  table.sheet td.csel input,table.sheet th.csel input{width:17px;height:17px;cursor:pointer;accent-color:var(--orange)}
+  table.sheet tr.selrow td{background:#fff4ef !important}
+  .sheet-del{background:#f0f3f9;border:none;border-radius:6px;color:#e5484d;font-weight:700;width:28px;height:28px;cursor:pointer;font-size:15px}
+  .sheet-bulk{display:none;align-items:center;gap:12px;background:var(--navy);color:#fff;border-radius:10px;padding:10px 14px;margin-bottom:10px}
+  .sheet-bulk b{color:var(--orange-2)}
+  .sheet-bulk .spacer{flex:1}
+  .sheet-bulk button{border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer}
+  .sheet-bulk .del{background:#e5484d;color:#fff}
+  .sheet-bulk .del:hover{background:#c93b3f}
+  .sheet-bulk .ghost{background:rgba(255,255,255,.15);color:#fff}
+  .sheet-bulk .ghost:hover{background:rgba(255,255,255,.28)}
+  .sheet-del:hover{background:#e5484d;color:#fff}
+  .sheet-tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .sheet-tools input.sq{flex:1;min-width:200px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:14px}
+  .sheet-tools select{padding:9px 11px;border:1px solid var(--line);border-radius:9px;font-size:13px;background:#fff}
+  .sheet-count{font-size:12px;color:var(--muted);font-weight:600}
+  .modal.sheetmodal{max-width:1480px;width:calc(100vw - 40px)}
+  @media(max-width:900px){.wrap{flex-direction:column}.sidebar{width:100%;position:static}.form-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <img src="logo-portoex.png" alt="PortoEx">
+  <div class="titles">
+    <h1>Agenda Conjunta &mdash; Captação de Fretes</h1>
+    <p>Contatos integrados de todos os envolvidos com busca de fretes</p>
+  </div>
+  <div class="spacer"></div>
+  <div class="cloud">
+    <span class="badge off" id="cloudBadge">◐ Local</span>
+    <button class="sync" id="syncBtn" title="Sincronizar" onclick="syncPull(true)">⟳</button>
+  </div>
+  <div class="op-bar">
+    <span class="lbl">Operador</span>
+    <select id="opSelect"></select>
+    <button onclick="openSettings()">⚙ Gerenciar</button>
+  </div>
+  <div class="stat"><b id="statTotal">0</b>contatos</div>
+</header>
+
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="panel">
+      <h3><span class="ic" style="background:var(--orange)">🔤</span>Filtrar por letra</h3>
+      <div class="body"><div class="alpha" id="alpha"></div></div>
+    </div>
+    <div class="panel">
+      <h3><span class="ic" style="background:var(--purple)">🏷️</span>Segmento</h3>
+      <div class="body" id="segList"></div>
+    </div>
+    <div class="panel">
+      <h3><span class="ic" style="background:var(--sky)">🚚</span>Tipo de veículo</h3>
+      <div class="body" id="vtypeList"></div>
+    </div>
+    <div class="panel">
+      <h3><span class="ic" style="background:var(--navy)">🏢</span>Empresa / Região</h3>
+      <div class="body">
+        <label class="fl">Empresa / Transportadora</label>
+        <select class="filt" id="filterCompany"><option value="">Todas</option></select>
+        <div style="height:10px"></div>
+        <label class="fl">Estado (UF)</label>
+        <select class="filt" id="filterUF"><option value="">Todos</option></select>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="searchbar">
+      <input id="search" type="text" placeholder="🔍  Buscar por nome, telefone, empresa, cidade...">
+      <button class="btn btn-nav" onclick="openImport()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Importar
+      </button>
+      <button class="btn btn-primary" onclick="openEdit(null)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Novo contato
+      </button>
+      <button class="btn btn-green" onclick="openSheet()" title="Editar todos em formato de planilha">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+        Painel
+      </button>
+      <button class="btn btn-ghost" title="Exportar CSV" onclick="exportCSV()">CSV</button>
+      <button class="btn btn-ghost" title="Exportar vCard" onclick="exportVCF()">VCF</button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div id="results"></div>
+  </main>
+</div>
+
+<!-- EDIT CONTATO -->
+<div class="overlay" id="editOverlay"><div class="modal">
+  <div class="m-head"><h3 id="editTitle">Novo contato</h3><button class="x" onclick="closeEdit()">&times;</button></div>
+  <div class="m-body"><div class="form-grid">
+    <div class="fg full"><label>Nome *</label><input id="f_nome" type="text" placeholder="Nome do contato"></div>
+    <div class="fg"><label>Telefone *</label><input id="f_tel" type="text" placeholder="(00) 00000-0000"></div>
+    <div class="fg"><label>E-mail</label><input id="f_email" type="text" placeholder="email@exemplo.com"></div>
+    <div class="fg"><label>Empresa / Transportadora</label><input id="f_empresa" type="text" placeholder="Nome da empresa"></div>
+    <div class="fg"><label>Segmento</label><select id="f_seg"></select></div>
+    <div class="fg"><label>Tipo de veículo</label><select id="f_tipo"></select></div>
+    <div class="fg"><label>Cidade</label><input id="f_cidade" type="text" placeholder="Cidade"></div>
+    <div class="fg"><label>Estado (UF)</label><select id="f_uf"></select></div>
+    <div class="fg full" style="border-top:1px solid var(--line);padding-top:12px;margin-top:2px"><label style="color:var(--navy)">📦 Capacidade do veículo</label></div>
+    <div class="fg"><label>Peso máx. (kg)</label><input id="f_peso" type="number" min="0" step="any" placeholder="Ex: 30000"></div>
+    <div class="fg"><label>Cubagem (m³)</label><input id="f_cubagem" type="number" min="0" step="any" placeholder="Ex: 90"></div>
+    <div class="fg"><label>Qtd. paletes</label><input id="f_paletes" type="number" min="0" step="1" placeholder="Ex: 28"></div>
+    <div class="fg full"><label>Observações</label><textarea id="f_obs" placeholder="Rotas, disponibilidade, anotações..."></textarea></div>
+  </div></div>
+  <div class="m-foot">
+    <button class="btn btn-ghost" onclick="closeEdit()">Cancelar</button>
+    <button class="btn btn-primary" onclick="saveContact()">Salvar</button>
+  </div>
+</div></div>
+
+<!-- PAINEL / PLANILHA -->
+<div class="overlay" id="sheetOverlay"><div class="modal sheetmodal">
+  <div class="m-head"><h3>▦ Painel de cadastros — edição rápida</h3><button class="x" onclick="closeSheet()">&times;</button></div>
+  <div class="m-body" style="padding:16px">
+    <div class="sheet-tools">
+      <input id="sheetSearch" class="sq" type="text" placeholder="🔍  Buscar nome, telefone, empresa, cidade...">
+      <select id="sheetFilterSeg"></select>
+      <select id="sheetFilterTipo"></select>
+      <select id="sheetOnlyIncomplete">
+        <option value="">Todos os contatos</option>
+        <option value="1">Só incompletos (faltando dados)</option>
+      </select>
+      <span class="sheet-count" id="sheetCount"></span>
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost" onclick="exportCSV()">Exportar CSV</button>
+      <button class="btn btn-nav" onclick="addRowSheet()">+ Nova linha</button>
+    </div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px">As alterações são salvas automaticamente ao sair de cada célula. Marque as caixas à esquerda para excluir vários de uma vez.</div>
+    <div class="sheet-bulk" id="sheetBulkBar">
+      <span><b id="sheetSelCount">0 selecionado(s)</b></span>
+      <div class="spacer"></div>
+      <button class="ghost" onclick="clearSheetSelection()">Limpar seleção</button>
+      <button class="del" onclick="deleteSelectedSheet()">🗑 Excluir selecionados</button>
+    </div>
+    <div class="sheet-wrap"><table class="sheet" id="sheetTable"></table></div>
+  </div>
+</div></div>
+
+<!-- IMPORT -->
+<div class="overlay" id="importOverlay"><div class="modal">
+  <div class="m-head"><h3>Importar contatos</h3><button class="x" onclick="closeImport()">&times;</button></div>
+  <div class="m-body" id="importBody">
+    <div class="dropzone" id="dropzone">
+      <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <h4>Arraste o arquivo aqui ou clique para escolher</h4>
+      <p>Exporte a agenda do seu celular e envie o arquivo</p>
+      <div class="fmt-tags"><span>.VCF (iPhone)</span><span>.VCF (Android)</span><span>.CSV (Google)</span><span>.CSV (iCloud)</span><span>.CSV (Outlook)</span></div>
+      <input type="file" id="fileInput" accept=".vcf,.csv,.txt" style="display:none" multiple>
+    </div>
+    <div class="import-help"><b>Como exportar a agenda:</b><br>
+      📱 <b>iPhone:</b> Contatos no iCloud.com &rarr; selecionar &rarr; Exportar vCard (.vcf).<br>
+      🤖 <b>Android:</b> app Contatos &rarr; Configurações &rarr; Exportar &rarr; .vcf.<br>
+      📇 <b>Google:</b> contacts.google.com &rarr; Exportar &rarr; Google CSV ou vCard.
+    </div>
+  </div>
+</div></div>
+
+<!-- CONFIGURAÇÕES -->
+<div class="overlay" id="settingsOverlay"><div class="modal wide">
+  <div class="m-head"><h3>⚙ Configurações</h3><button class="x" onclick="closeSettings()">&times;</button></div>
+  <div class="m-body">
+    <div class="sec-title">☁️ Base compartilhada (Google Sheets)</div>
+    <div class="cloud-box">
+      <div class="st"><span class="dotst" id="cfgDot" style="background:#f59e0b"></span><span id="cfgStatus">Modo local — dados só neste navegador</span></div>
+      <input id="cfgUrl" type="text" placeholder="// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyB1fF4ingu9Ko_3nuNQRFJYgIvuAofHEHc",
+  authDomain: "agenda-terceiros-portoex.firebaseapp.com",
+  projectId: "agenda-terceiros-portoex",
+  storageBucket: "agenda-terceiros-portoex.firebasestorage.app",
+  messagingSenderId: "1082005339255",
+  appId: "1:1082005339255:web:6531e60da33a2744085a72",
+  measurementId: "G-T31K7RG185"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+      <div class="row2">
+        <button class="btn-green" onclick="testConn()">Testar conexão</button>
+        <button class="btn-nav" onclick="saveConn()">Conectar / Salvar</button>
+        <button class="btn-ghost" onclick="disconnect()">Desconectar</button>
+      </div>
+      <small>Cole a URL gerada ao publicar o script da planilha como <b>App da Web</b> (veja o arquivo "COMO CONECTAR.txt"). Depois de conectar, todos que usarem a mesma URL veem a mesma base.</small>
+    </div>
+
+    <div class="sec-title">🏷️ Segmentos</div>
+    <div class="op-list" id="segManageList"></div>
+    <div style="display:flex;gap:8px;margin-bottom:22px">
+      <input id="newSegName" class="filt" style="margin:0" type="text" placeholder="Novo segmento (ex: Cooperativa)">
+      <button class="btn btn-nav" style="padding:9px 16px" onclick="addSegment()">Adicionar</button>
+    </div>
+
+    <div class="sec-title">🚚 Tipos de veículo</div>
+    <div class="op-list" id="vtypeManageList"></div>
+    <div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap">
+      <input id="newVtName" class="filt" style="margin:0;flex:2;min-width:150px" type="text" placeholder="Novo tipo (ex: Cegonha, Baú refrigerado)">
+      <select id="newVtGroup" class="filt" style="margin:0;flex:1;min-width:150px"></select>
+      <button class="btn btn-nav" style="padding:9px 16px" onclick="addVtype()">Adicionar</button>
+    </div>
+
+    <div class="sec-title">👤 Operadores da captação</div>
+    <div class="op-list" id="opManageList"></div>
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <input id="newOpName" class="filt" style="margin:0" type="text" placeholder="Nome do novo operador">
+      <button class="btn btn-nav" style="padding:9px 16px" onclick="addOperator()">Adicionar</button>
+    </div>
+
+    <div class="sec-title">💬 Mensagens de <span id="msgOpName" style="color:var(--orange)"></span></div>
+    <div class="msg-list" id="msgList"></div>
+    <button class="btn btn-green" style="width:100%;justify-content:center" onclick="openMsgForm(null)">+ Nova mensagem padrão</button>
+  </div>
+</div></div>
+
+<!-- FORM MENSAGEM -->
+<div class="overlay" id="msgFormOverlay"><div class="modal">
+  <div class="m-head"><h3 id="msgFormTitle">Nova mensagem</h3><button class="x" onclick="closeMsgForm()">&times;</button></div>
+  <div class="m-body"><div class="form-grid">
+    <div class="fg full"><label>Título / apelido *</label><input id="m_titulo" type="text" placeholder="Ex: Cotação padrão SP"></div>
+    <div class="fg"><label>Tipo de operação</label><select id="m_operacao"></select></div>
+    <div class="fg"><label>Tipo de veículo (opcional)</label><select id="m_veiculo"></select></div>
+    <div class="fg full"><label>Mensagem *</label><textarea id="m_texto" style="min-height:120px" placeholder="Olá {nome}, aqui é da PortoEx..."></textarea>
+      <div class="ph-hint">Clique para inserir: <code onclick="insPH('{nome}')">{nome}</code> <code onclick="insPH('{empresa}')">{empresa}</code> <code onclick="insPH('{veiculo}')">{veiculo}</code> <code onclick="insPH('{cidade}')">{cidade}</code> <code onclick="insPH('{uf}')">{uf}</code> <code onclick="insPH('{operador}')">{operador}</code></div>
+    </div>
+  </div></div>
+  <div class="m-foot">
+    <button class="btn btn-ghost" onclick="closeMsgForm()">Cancelar</button>
+    <button class="btn btn-primary" onclick="saveMsg()">Salvar mensagem</button>
+  </div>
+</div></div>
+
+<!-- WHATSAPP PICKER -->
+<div class="overlay" id="waOverlay"><div class="modal">
+  <div class="m-head" style="background:#128c3e"><h3 id="waTitle">Enviar WhatsApp</h3><button class="x" onclick="closeWA()">&times;</button></div>
+  <div class="m-body" id="waBody"></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ REFERÊNCIA ============ */
+const PALETTE=["#f05a28","#3b82f6","#8b5cf6","#0ea5e9","#14b8a6","#ec4899","#f59e0b","#1f9d55","#e5484d","#7c3aed","#0891b2","#16233f"];
+function pickColor(i){ return PALETTE[i%PALETTE.length]; }
+const DEFAULT_VEHICLE_GROUPS = [
+  { group:"Leves e Passageiros", color:"#3b82f6", types:["Passeio","Utilitário","Van / Furgão"] },
+  { group:"Caminhões Leves e Médios", color:"#0ea5e9", types:["Semi-Leve (VUC)","Leve (3/4)","Médio"] },
+  { group:"Pesados e Pesadíssimos", color:"#f05a28", types:["Pesado (Toco / 4x2)","Pesado (Truck / 6x2)","Extra-Pesado (Bitruck / 8x2)"] },
+  { group:"Combinações (Articulados)", color:"#8b5cf6", types:["Carreta (Cavalo + Semirreboque)","Bitrem","Rodotrem"] },
+  { group:"Personalizados", color:"#14b8a6", types:[] }
+];
+const DEFAULT_SEGMENTS=[{nome:"Transportadora",color:"#f05a28"},{nome:"Motorista Autônomo",color:"#3b82f6"},{nome:"Agenciador",color:"#8b5cf6"},{nome:"Embarcador",color:"#0ea5e9"},{nome:"Interno PortoEx",color:"#16233f"}];
+const K_SEGMENTS="portoex_segmentos_v1", K_VGROUPS="portoex_vtipos_v1";
+let VEHICLE_GROUPS = loadJSON(K_VGROUPS,null) || JSON.parse(JSON.stringify(DEFAULT_VEHICLE_GROUPS));
+let SEGMENTS = loadJSON(K_SEGMENTS,null) || JSON.parse(JSON.stringify(DEFAULT_SEGMENTS));
+if(!VEHICLE_GROUPS.some(g=>g.group==="Personalizados")) VEHICLE_GROUPS.push({group:"Personalizados",color:"#14b8a6",types:[]});
+let TYPE_COLOR={}, SEG_COLOR={};
+function rebuildColors(){ TYPE_COLOR={}; VEHICLE_GROUPS.forEach(g=>g.types.forEach(t=>TYPE_COLOR[t]=g.color)); SEG_COLOR={}; SEGMENTS.forEach(s=>SEG_COLOR[s.nome]=s.color); }
+rebuildColors();
+const OPERACOES=["Cotação de frete","Confirmação de carga","Follow-up","Cobrança de documento","Prospecção","Aviso / Comunicado","Outro"];
+const OPERACAO_COLOR={"Cotação de frete":"#f05a28","Confirmação de carga":"#1f9d55","Follow-up":"#3b82f6","Cobrança de documento":"#f59e0b","Prospecção":"#8b5cf6","Aviso / Comunicado":"#0ea5e9","Outro":"#6b7688"};
+const LETTER_COLORS=["#16233f","#f05a28","#3b82f6","#8b5cf6","#0ea5e9","#14b8a6","#ec4899","#f59e0b","#1f9d55"];
+const UFS=["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
+const K_CONTACTS="portoex_agenda_conjunta_v1", K_OPS="portoex_operadores_v1", K_MSGS="portoex_mensagens_v1", K_ACTIVE="portoex_operador_ativo_v1", K_URL="portoex_sheet_url_v1";
+
+/* ============ ESTADO ============ */
+let contacts=loadJSON(K_CONTACTS,[]), operators=loadJSON(K_OPS,[]), messages=loadJSON(K_MSGS,[]);
+let activeOp=localStorage.getItem(K_ACTIVE)||"";
+let sheetUrl=localStorage.getItem(K_URL)||"";
+let CLOUD=!!sheetUrl, busy=false;
+let filter={letter:"",seg:"",type:"",company:"",uf:"",q:""};
+let editingId=null, editingMsgId=null;
+
+function loadJSON(k,def){ try{ return JSON.parse(localStorage.getItem(k))||def }catch(e){ return def } }
+function persistLocal(){ localStorage.setItem(K_CONTACTS,JSON.stringify(contacts)); localStorage.setItem(K_OPS,JSON.stringify(operators)); localStorage.setItem(K_MSGS,JSON.stringify(messages)); localStorage.setItem(K_SEGMENTS,JSON.stringify(SEGMENTS)); localStorage.setItem(K_VGROUPS,JSON.stringify(VEHICLE_GROUPS)); }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+
+/* ============ HELPERS ============ */
+function initials(n){ const p=(n||"?").trim().split(/\s+/); return ((p[0]||"")[0]||"")+((p[1]||"")[0]||""); }
+function firstName(n){ return (n||"").trim().split(/\s+/)[0]||""; }
+function normalize(s){ return (s||"").toString().normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim(); }
+function digits(s){ return (s||"").replace(/\D/g,""); }
+function waNumber(t){ let d=digits(t); if(!d) return ""; if(d.length<=11) d="55"+d; return d; }
+function fmtPhone(t){ const d=digits(t); if(d.length===11) return "("+d.slice(0,2)+") "+d.slice(2,7)+"-"+d.slice(7); if(d.length===10) return "("+d.slice(0,2)+") "+d.slice(2,6)+"-"+d.slice(6); return t||""; }
+function esc(s){ return (s||"").toString().replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m])); }
+function guessType(raw){ const s=normalize(raw); if(!s) return ""; const map=[["rodotrem","Rodotrem"],["bitrem","Bitrem"],["carreta","Carreta (Cavalo + Semirreboque)"],["cavalo","Carreta (Cavalo + Semirreboque)"],["semirreboque","Carreta (Cavalo + Semirreboque)"],["bitruck","Extra-Pesado (Bitruck / 8x2)"],["bi-truck","Extra-Pesado (Bitruck / 8x2)"],["8x2","Extra-Pesado (Bitruck / 8x2)"],["truck","Pesado (Truck / 6x2)"],["6x2","Pesado (Truck / 6x2)"],["toco","Pesado (Toco / 4x2)"],["4x2","Pesado (Toco / 4x2)"],["vuc","Semi-Leve (VUC)"],["semi-leve","Semi-Leve (VUC)"],["semi leve","Semi-Leve (VUC)"],["3/4","Leve (3/4)"],["medio","Médio"],["van","Van / Furgão"],["furgao","Van / Furgão"],["utilitario","Utilitário"],["suv","Utilitário"],["caminhonete","Utilitário"],["passeio","Passeio"],["carro","Passeio"]]; for(const p of map){ if(s.includes(p[0])) return p[1]; } return ""; }
+function guessSegment(raw){ const s=normalize(raw); if(!s) return ""; if(/(portoex|porto express|portoexpress)/.test(s)) return "Interno PortoEx"; if(/(agenciad|agencia|agenciam|broker|corretora de frete)/.test(s)) return "Agenciador"; if(/(motorista|autonomo|caminhoneiro|proprietario|frota propria)/.test(s)) return "Motorista Autônomo"; if(/(transportadora|transporte|logistic|logist| log |cargas|carga |express|rodoviari|frete|frota|expresso)/.test(" "+s+" ")) return "Transportadora"; if(/(industria|comercio|distribuidora|fabrica|atacad|embarcador|importadora|exportadora)/.test(s)) return "Embarcador"; return ""; }
+
+/* ============ CAMADA DE NUVEM (Google Sheets) ============ */
+async function api(action,payload){
+  const res=await fetch(sheetUrl,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({action},payload))});
+  return await res.json();
+}
+async function cloudLoad(){
+  const res=await fetch(sheetUrl+"?t="+Date.now(),{method:"GET"});
+  return await res.json();
+}
+function applyData(d){
+  if(d.contacts) contacts=d.contacts.map(fixContact);
+  if(d.operators) operators=d.operators;
+  if(d.messages) messages=d.messages;
+  if(d.config){
+    if(Array.isArray(d.config.segments)&&d.config.segments.length) SEGMENTS=d.config.segments;
+    if(Array.isArray(d.config.vgroups)&&d.config.vgroups.length) VEHICLE_GROUPS=d.config.vgroups;
+    if(!VEHICLE_GROUPS.some(g=>g.group==="Personalizados")) VEHICLE_GROUPS.push({group:"Personalizados",color:"#14b8a6",types:[]});
+    rebuildColors();
+  }
+  fixActiveOp(); persistLocal();
+}
+function fixContact(c){ return {id:c.id,nome:c.nome||"",tel:c.tel||"",email:c.email||"",empresa:c.empresa||"",segmento:c.segmento||"",tipo:c.tipo||"",cidade:c.cidade||"",uf:c.uf||"",peso:c.peso||"",cubagem:c.cubagem||"",paletes:c.paletes||"",obs:c.obs||""}; }
+function fixActiveOp(){ if(!activeOp||!operators.find(o=>o.id===activeOp)){ activeOp=operators[0]?operators[0].id:""; localStorage.setItem(K_ACTIVE,activeOp); } }
+function setCloud(state){ // 'on' | 'off' | 'err' | 'loading'
+  const b=document.getElementById("cloudBadge");
+  if(state==="on"){ b.className="badge on"; b.textContent="☁ Nuvem"; }
+  else if(state==="err"){ b.className="badge err"; b.textContent="⚠ Sem conexão"; }
+  else if(state==="loading"){ b.className="badge off"; b.textContent="⟳ Sincronizando"; }
+  else { b.className="badge off"; b.textContent="◐ Local"; }
+}
+async function remoteUpsert(entity,obj){ if(!CLOUD) return; try{ busy=true; const r=await api("upsert",{entity,data:obj}); if(r&&r.ok){ applyData(r.data); setCloud("on"); } else { toast("Erro na base: "+((r&&r.error)||""),"err"); } }catch(e){ setCloud("err"); toast("Sem conexão — salvo localmente","err"); } finally{ busy=false; refresh(); } }
+async function remoteDelete(entity,id){ if(!CLOUD) return; try{ busy=true; const r=await api("delete",{entity,id}); if(r&&r.ok){ applyData(r.data); setCloud("on"); } }catch(e){ setCloud("err"); toast("Sem conexão — removido localmente","err"); } finally{ busy=false; refresh(); } }
+async function remoteBulk(entity,arr){ if(!CLOUD) return null; const r=await api("bulk",{entity,data:arr}); if(r&&r.ok){ applyData(r.data); setCloud("on"); } return r; }
+async function remoteConfig(){ if(!CLOUD) return; try{ busy=true; const r=await api("config",{data:{segments:SEGMENTS,vgroups:VEHICLE_GROUPS}}); if(r&&r.ok){ setCloud("on"); } }catch(e){ setCloud("err"); toast("Sem conexão — categorias salvas localmente","err"); } finally{ busy=false; } }
+async function syncPull(manual){
+  if(!CLOUD||busy) { if(manual&&!CLOUD) toast("Conecte a base compartilhada em ⚙ Gerenciar"); return; }
+  const btn=document.getElementById("syncBtn"); btn.classList.add("spin");
+  try{ const d=await cloudLoad(); applyData(d); setCloud("on"); if(manual) toast("Base sincronizada",true); }
+  catch(e){ setCloud("err"); if(manual) toast("Não foi possível sincronizar","err"); }
+  finally{ btn.classList.remove("spin"); refresh(); }
+}
+
+/* config de conexão */
+function openSettingsCloudFields(){
+  document.getElementById("cfgUrl").value=sheetUrl;
+  const dot=document.getElementById("cfgDot"), st=document.getElementById("cfgStatus");
+  if(CLOUD){ dot.style.background="#1f9d55"; st.innerHTML="Conectado à base compartilhada ✓"; }
+  else { dot.style.background="#f59e0b"; st.textContent="Modo local — dados só neste navegador"; }
+}
+async function testConn(){
+  const u=document.getElementById("cfgUrl").value.trim();
+  if(!/\/exec$/.test(u)){ toast("A URL deve terminar em /exec","err"); return; }
+  toast("Testando...");
+  try{ const res=await fetch(u+"?t="+Date.now()); const d=await res.json();
+    if(d&&(d.contacts||d.operators)){ document.getElementById("cfgDot").style.background="#1f9d55"; document.getElementById("cfgStatus").innerHTML="Conexão OK ✓ — clique em Conectar / Salvar"; toast("Conexão bem-sucedida!",true); }
+    else toast("Respondeu, mas formato inesperado","err");
+  }catch(e){ toast("Falha ao conectar. Verifique a URL e a publicação.","err"); document.getElementById("cfgDot").style.background="#e5484d"; }
+}
+async function saveConn(){
+  const u=document.getElementById("cfgUrl").value.trim();
+  if(!/\/exec$/.test(u)){ toast("A URL deve terminar em /exec","err"); return; }
+  sheetUrl=u; localStorage.setItem(K_URL,u); CLOUD=true; setCloud("loading");
+  try{ const d=await cloudLoad(); applyData(d); setCloud("on"); openSettingsCloudFields(); renderOpManage(); renderMsgs(); refresh(); toast("Base conectada! Todos com esta URL verão os mesmos dados.",true); }
+  catch(e){ setCloud("err"); toast("Conectado, mas sem resposta agora. Tente Sincronizar.","err"); }
+}
+function disconnect(){ if(!confirm("Desconectar da base compartilhada e voltar ao modo local?")) return; sheetUrl=""; localStorage.removeItem(K_URL); CLOUD=false; setCloud("off"); openSettingsCloudFields(); toast("Desconectado — modo local"); }
+
+/* ============ OPERADORES ============ */
+function ensureLocalSeed(){
+  if(!operators.length){ const id=uid(); operators=[{id,nome:"Operador PortoEx"}]; activeOp=id; localStorage.setItem(K_ACTIVE,activeOp); }
+  fixActiveOp();
+  if(!messages.length && !localStorage.getItem("portoex_msg_seeded")){
+    messages=[
+      {id:uid(),operadorId:activeOp,titulo:"Cotação de frete",operacao:"Cotação de frete",veiculo:"",texto:"Olá {nome}, tudo bem? Aqui é {operador}, da PortoEx. Temos uma carga e gostaríamos de cotar frete. Seu {veiculo} está disponível? Pode me passar um valor para a rota?"},
+      {id:uid(),operadorId:activeOp,titulo:"Confirmação de carga",operacao:"Confirmação de carga",veiculo:"",texto:"Olá {nome}! Confirmando o carregamento com a PortoEx. Empresa: {empresa}. Qualquer dúvida estou à disposição. Att, {operador}."},
+      {id:uid(),operadorId:activeOp,titulo:"Prospecção nova",operacao:"Prospecção",veiculo:"",texto:"Olá {nome}, sou {operador}, da PortoEx Transportes. Estamos ampliando nossa rede de parceiros em {cidade}/{uf}. Podemos conversar sobre parcerias de frete?"}
+    ];
+    localStorage.setItem("portoex_msg_seeded","1");
+  }
+  if(!contacts.length && !localStorage.getItem("portoex_seeded")){
+    contacts=[
+      {id:uid(),nome:"João Ribeiro",tel:"11987654321",email:"joao@ribeirocargas.com",empresa:"Ribeiro Cargas",segmento:"Transportadora",tipo:"Carreta (Cavalo + Semirreboque)",cidade:"São Paulo",uf:"SP",obs:"Rotas SP-MG, disponível dias úteis"},
+      {id:uid(),nome:"Maria Santos",tel:"31991234567",email:"",empresa:"MS Fretes",segmento:"Transportadora",tipo:"Pesado (Truck / 6x2)",cidade:"Belo Horizonte",uf:"MG",obs:""},
+      {id:uid(),nome:"Carlos Oliveira",tel:"41998887766",email:"carlos@gmail.com",empresa:"",segmento:"Motorista Autônomo",tipo:"Semi-Leve (VUC)",cidade:"Curitiba",uf:"PR",obs:"Entregas urbanas na região"}
+    ];
+    localStorage.setItem("portoex_seeded","1");
+  }
+  persistLocal();
+}
+function buildOpSelect(){ document.getElementById("opSelect").innerHTML=operators.map(o=>'<option value="'+o.id+'" '+(o.id===activeOp?"selected":"")+'>'+esc(o.nome)+'</option>').join(""); }
+document.getElementById("opSelect").addEventListener("change",e=>{ activeOp=e.target.value; localStorage.setItem(K_ACTIVE,activeOp); });
+function opName(id){ const o=operators.find(x=>x.id===id); return o?o.nome:""; }
+
+/* ============ FILTROS ============ */
+function buildAlpha(){
+  const el=document.getElementById("alpha"); const present=new Set();
+  contacts.forEach(c=>{ const L=(c.nome||"").trim()[0]; if(L) present.add(L.toUpperCase()); });
+  let html="", ci=0;
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(L=>{ const has=present.has(L); const col=has?LETTER_COLORS[ci++%LETTER_COLORS.length]:""; const style=has?'style="color:'+col+'"':"";
+    html+='<button class="'+(has?"":"empty")+' '+(filter.letter===L?"active":"")+'" '+style+' '+(has?'onclick="setF(\'letter\',\''+L+'\')"':"")+'>'+L+'</button>'; });
+  el.innerHTML=html;
+}
+function buildSeg(){
+  const el=document.getElementById("segList"); const counts={}; contacts.forEach(c=>{ if(c.segmento) counts[c.segmento]=(counts[c.segmento]||0)+1; });
+  const semCat=contacts.filter(c=>!c.segmento).length; let html="";
+  SEGMENTS.forEach(sg=>{ html+='<div class="vtype '+(filter.seg===sg.nome?"active":"")+'" onclick="setF(\'seg\',\''+sg.nome.replace(/'/g,"\\'")+'\')"><span class="dot" style="background:'+sg.color+'"></span><span>'+sg.nome+'</span><span class="cnt">'+(counts[sg.nome]||0)+'</span></div>'; });
+  if(semCat) html+='<div class="vtype '+(filter.seg==="__none__"?"active":"")+'" onclick="setF(\'seg\',\'__none__\')"><span class="dot" style="background:#c2cad6"></span><span>Sem classificação</span><span class="cnt">'+semCat+'</span></div>';
+  el.innerHTML=html;
+}
+function buildVtypes(){
+  const el=document.getElementById("vtypeList"); const counts={}; contacts.forEach(c=>{ if(c.tipo) counts[c.tipo]=(counts[c.tipo]||0)+1; });
+  let html=""; VEHICLE_GROUPS.forEach(g=>{ html+='<div class="vtype-group"><div class="g-head">'+g.group+'</div>';
+    g.types.forEach(t=>{ html+='<div class="vtype '+(filter.type===t?"active":"")+'" onclick="setF(\'type\',\''+t.replace(/'/g,"\\'")+'\')"><span class="dot" style="background:'+g.color+'"></span><span>'+t+'</span><span class="cnt">'+(counts[t]||0)+'</span></div>'; });
+    html+='</div>'; });
+  el.innerHTML=html;
+}
+function buildCompanyUF(){
+  const comps=[...new Set(contacts.map(c=>c.empresa).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  const ufs=[...new Set(contacts.map(c=>c.uf).filter(Boolean))].sort();
+  document.getElementById("filterCompany").innerHTML='<option value="">Todas</option>'+comps.map(c=>'<option '+(filter.company===c?"selected":"")+'>'+esc(c)+'</option>').join("");
+  document.getElementById("filterUF").innerHTML='<option value="">Todos</option>'+ufs.map(u=>'<option '+(filter.uf===u?"selected":"")+'>'+u+'</option>').join("");
+}
+function setF(k,v){ filter[k]=filter[k]===v?"":v; refresh(); }
+document.getElementById("filterCompany").addEventListener("change",e=>{filter.company=e.target.value;refresh();});
+document.getElementById("filterUF").addEventListener("change",e=>{filter.uf=e.target.value;refresh();});
+document.getElementById("search").addEventListener("input",e=>{filter.q=e.target.value;refresh();});
+function buildChips(){
+  const el=document.getElementById("chips"); const p=[];
+  if(filter.letter) p.push(chip("Letra",filter.letter,"letter"));
+  if(filter.seg) p.push(chip("Segmento",filter.seg==="__none__"?"Sem classificação":filter.seg,"seg"));
+  if(filter.type) p.push(chip("Veículo",filter.type,"type"));
+  if(filter.company) p.push(chip("Empresa",filter.company,"company"));
+  if(filter.uf) p.push(chip("UF",filter.uf,"uf"));
+  if(filter.q) p.push(chip("Busca",filter.q,"q"));
+  el.innerHTML=p.length?p.join("")+'<button class="chip" style="cursor:pointer" onclick="clearAll()"><b>Limpar tudo</b></button>':"";
+}
+function chip(k,v,f){ return '<span class="chip"><b>'+k+':</b> '+esc(v)+' <button onclick="clearF(\''+f+'\')">&times;</button></span>'; }
+function clearF(f){ filter[f]=""; if(f==="q") document.getElementById("search").value=""; refresh(); }
+function clearAll(){ filter={letter:"",seg:"",type:"",company:"",uf:"",q:""}; document.getElementById("search").value=""; refresh(); }
+function apply(){
+  return contacts.filter(c=>{
+    if(filter.letter){ const L=(c.nome||"").trim()[0]; if(!L||L.toUpperCase()!==filter.letter) return false; }
+    if(filter.seg==="__none__"){ if(c.segmento) return false; } else if(filter.seg && c.segmento!==filter.seg) return false;
+    if(filter.type && c.tipo!==filter.type) return false;
+    if(filter.company && c.empresa!==filter.company) return false;
+    if(filter.uf && c.uf!==filter.uf) return false;
+    if(filter.q){ const q=normalize(filter.q), dq=digits(filter.q); const hay=normalize([c.nome,c.empresa,c.cidade,c.email,c.obs,c.tipo,c.segmento].join(" ")); if(!hay.includes(q) && !(dq && digits(c.tel).includes(dq))) return false; }
+    return true;
+  }).sort((a,b)=>(a.nome||"").localeCompare(b.nome||"","pt"));
+}
+
+/* ============ RENDER ============ */
+function icon(p){ return '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+p+'</svg>'; }
+const IC={ phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>', mail:'<path d="M4 4h16v16H4z"/><polyline points="22,6 12,13 2,6"/>', pin:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>' };
+function icon2(){ return '<svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'; }
+function render(){
+  const list=apply(), el=document.getElementById("results");
+  document.getElementById("statTotal").textContent=contacts.length;
+  if(!contacts.length){ el.innerHTML='<div class="empty">'+icon2()+'<h4>Nenhum contato ainda</h4><p>Importe sua agenda ou adicione o primeiro contato.</p></div>'; return; }
+  if(!list.length){ el.innerHTML='<div class="empty">'+icon2()+'<h4>Nenhum resultado</h4><p>Ajuste os filtros ou a busca.</p></div>'; return; }
+  el.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px">'+list.length+' contato(s)</div><div class="grid">'+list.map(cardHtml).join("")+'</div>';
+}
+function fmtNum(v){ if(v===""||v==null) return ""; const n=Number(v); return isNaN(n)?String(v):n.toLocaleString("pt-BR"); }
+function capHtml(c){
+  const items=[];
+  if(c.peso!=="" && c.peso!=null) items.push('⚖️ '+fmtNum(c.peso)+' kg');
+  if(c.cubagem!=="" && c.cubagem!=null) items.push('📐 '+fmtNum(c.cubagem)+' m³');
+  if(c.paletes!=="" && c.paletes!=null) items.push('📦 '+fmtNum(c.paletes)+' plt');
+  if(!items.length) return "";
+  return '<div class="caps">'+items.map(t=>'<span class="cap">'+esc(t)+'</span>').join("")+'</div>';
+}
+function cardHtml(c){
+  const vcol=TYPE_COLOR[c.tipo]||"#94a3b8", scol=SEG_COLOR[c.segmento]||"#94a3b8";
+  const loc=[c.cidade,c.uf].filter(Boolean).join(" / ");
+  const av=c.segmento?scol:(c.tipo?vcol:"var(--navy)");
+  let badges=""; if(c.segmento) badges+='<span class="badge" style="background:'+scol+'">'+esc(c.segmento)+'</span>';
+  if(c.tipo) badges+='<span class="badge outline" style="color:'+vcol+';border-color:'+vcol+'">🚚 '+esc(c.tipo)+'</span>';
+  return '<div class="card"><div class="top"><div class="avatar" style="background:'+av+'">'+esc((initials(c.nome)||"?").toUpperCase())+'</div>'+
+    '<div style="flex:1;min-width:0"><div class="name">'+esc(c.nome||"Sem nome")+'</div>'+(c.empresa?'<div class="company">'+esc(c.empresa)+'</div>':"")+'</div></div>'+
+    (badges?'<div class="badges">'+badges+'</div>':"")+
+    '<div class="rows">'+
+      (c.tel?'<div class="row">'+icon(IC.phone)+'<a href="tel:'+digits(c.tel)+'">'+esc(fmtPhone(c.tel))+'</a></div>':"")+
+      (c.email?'<div class="row">'+icon(IC.mail)+'<a href="mailto:'+esc(c.email)+'">'+esc(c.email)+'</a></div>':"")+
+      (loc?'<div class="row">'+icon(IC.pin)+'<span>'+esc(loc)+'</span></div>':"")+
+    '</div>'+capHtml(c)+(c.obs?'<div class="note">'+esc(c.obs)+'</div>':"")+
+    '<div class="actions">'+(c.tel?'<button class="wa" onclick="sendWA(\''+c.id+'\')">WhatsApp</button>':"")+
+      '<button onclick="openEdit(\''+c.id+'\')">Editar</button><button class="del" onclick="delContact(\''+c.id+'\')">Excluir</button></div></div>';
+}
+function refresh(){ buildOpSelect(); buildAlpha(); buildSeg(); buildVtypes(); buildCompanyUF(); buildChips(); render(); }
+
+/* ============ ADD/EDIT CONTATO ============ */
+function fillSelect(sel,items,val,none){ let h='<option value="">'+(none||"—")+'</option>'; items.forEach(t=>h+='<option '+(val===t?"selected":"")+'>'+t+'</option>'); sel.innerHTML=h; }
+function fillTypeSelect(sel,val){ let h='<option value="">— não definido —</option>'; VEHICLE_GROUPS.forEach(g=>{ h+='<optgroup label="'+g.group+'">'; g.types.forEach(t=>h+='<option '+(val===t?"selected":"")+'>'+t+'</option>'); h+='</optgroup>'; }); sel.innerHTML=h; }
+function openEdit(id){
+  editingId=id; const c=id?contacts.find(x=>x.id===id):{};
+  document.getElementById("editTitle").textContent=id?"Editar contato":"Novo contato";
+  document.getElementById("f_nome").value=c.nome||""; document.getElementById("f_tel").value=c.tel||"";
+  document.getElementById("f_email").value=c.email||""; document.getElementById("f_empresa").value=c.empresa||"";
+  document.getElementById("f_cidade").value=c.cidade||""; document.getElementById("f_obs").value=c.obs||"";
+  document.getElementById("f_peso").value=c.peso||""; document.getElementById("f_cubagem").value=c.cubagem||""; document.getElementById("f_paletes").value=c.paletes||"";
+  fillSelect(document.getElementById("f_seg"),SEGMENTS.map(s=>s.nome),c.segmento||"","— não classificado —");
+  fillTypeSelect(document.getElementById("f_tipo"),c.tipo||""); fillSelect(document.getElementById("f_uf"),UFS,c.uf||"");
+  document.getElementById("editOverlay").classList.add("show");
+}
+function closeEdit(){ document.getElementById("editOverlay").classList.remove("show"); editingId=null; }
+function saveContact(){
+  const nome=document.getElementById("f_nome").value.trim(), tel=document.getElementById("f_tel").value.trim();
+  if(!nome){ toast("Informe o nome","err"); return; } if(!tel){ toast("Informe o telefone","err"); return; }
+  const d={nome,tel,email:document.getElementById("f_email").value.trim(),empresa:document.getElementById("f_empresa").value.trim(),segmento:document.getElementById("f_seg").value,tipo:document.getElementById("f_tipo").value,cidade:document.getElementById("f_cidade").value.trim(),uf:document.getElementById("f_uf").value,peso:document.getElementById("f_peso").value.trim(),cubagem:document.getElementById("f_cubagem").value.trim(),paletes:document.getElementById("f_paletes").value.trim(),obs:document.getElementById("f_obs").value.trim()};
+  let obj;
+  if(editingId){ obj=Object.assign(contacts.find(x=>x.id===editingId),d); }
+  else { obj=Object.assign({id:uid()},d); contacts.push(obj); }
+  persistLocal(); closeEdit(); refresh(); toast("Contato salvo",true);
+  remoteUpsert("contacts",obj);
+}
+function delContact(id){
+  const c=contacts.find(x=>x.id===id); if(!confirm('Excluir "'+((c&&c.nome)||"contato")+'"?')) return;
+  contacts=contacts.filter(x=>x.id!==id); persistLocal(); refresh(); toast("Contato excluído",true);
+  remoteDelete("contacts",id);
+}
+
+/* ============ WHATSAPP ============ */
+function applyTemplate(text,c){ return (text||"").replace(/{nome}/gi,firstName(c.nome)).replace(/{empresa}/gi,c.empresa||"").replace(/{veiculo}/gi,c.tipo||"").replace(/{cidade}/gi,c.cidade||"").replace(/{uf}/gi,c.uf||"").replace(/{operador}/gi,opName(activeOp)); }
+function sendWA(id){
+  const c=contacts.find(x=>x.id===id); if(!c) return;
+  const msgs=messages.filter(m=>m.operadorId===activeOp);
+  if(!msgs.length){ window.open("https://wa.me/"+waNumber(c.tel),"_blank"); return; }
+  msgs.sort((a,b)=>{ const am=(a.veiculo&&a.veiculo===c.tipo)?0:1, bm=(b.veiculo&&b.veiculo===c.tipo)?0:1; return am-bm; });
+  document.getElementById("waTitle").textContent="Enviar p/ "+firstName(c.nome);
+  let h='<div style="font-size:12px;color:var(--muted);margin-bottom:12px">Operador: <b style="color:var(--navy)">'+esc(opName(activeOp))+'</b> &middot; escolha a mensagem:</div>';
+  h+=msgs.map(m=>{ const oc=OPERACAO_COLOR[m.operacao]||"#6b7688"; const match=(m.veiculo&&m.veiculo===c.tipo)?'<span class="match">✓ '+esc(c.tipo)+'</span>':"";
+    return '<div class="wa-msg" onclick="fireWA(\''+c.id+'\',\''+m.id+'\')"><div class="wh"><span class="wt">'+esc(m.titulo)+'</span>'+match+'<span class="tag" style="background:'+oc+';font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;color:#fff">'+esc(m.operacao)+'</span></div><div class="wp">'+esc(applyTemplate(m.texto,c))+'</div></div>'; }).join("");
+  h+='<div class="wa-msg" style="border-style:dashed;text-align:center" onclick="fireWA(\''+c.id+'\',\'\')"><span style="color:var(--muted);font-weight:600">Abrir sem mensagem →</span></div>';
+  document.getElementById("waBody").innerHTML=h; document.getElementById("waOverlay").classList.add("show");
+}
+function fireWA(cid,mid){ const c=contacts.find(x=>x.id===cid); let url="https://wa.me/"+waNumber(c.tel); if(mid){ const m=messages.find(x=>x.id===mid); if(m) url+="?text="+encodeURIComponent(applyTemplate(m.texto,c)); } window.open(url,"_blank"); closeWA(); }
+function closeWA(){ document.getElementById("waOverlay").classList.remove("show"); }
+
+/* ============ CONFIGURAÇÕES ============ */
+function openSettings(){ openSettingsCloudFields(); renderSegManage(); fillVtGroupSelect(); renderVtypeManage(); renderOpManage(); renderMsgs(); document.getElementById("settingsOverlay").classList.add("show"); }
+function closeSettings(){ document.getElementById("settingsOverlay").classList.remove("show"); refresh(); }
+function renderOpManage(){
+  const el=document.getElementById("opManageList");
+  el.innerHTML=operators.map(o=>{ const mc=messages.filter(m=>m.operadorId===o.id).length;
+    return '<div class="op-item '+(o.id===activeOp?"act":"")+'"><div class="av">'+esc((initials(o.nome)||"?").toUpperCase())+'</div><div class="nm">'+esc(o.nome)+' <span style="font-weight:400;color:var(--muted);font-size:12px">('+mc+' msg)</span></div>'+
+      (o.id===activeOp?'<span style="font-size:11px;color:var(--orange);font-weight:700">ATIVO</span>':'<button class="mini" onclick="setActiveOp(\''+o.id+'\')">Tornar ativo</button>')+
+      '<button class="mini" onclick="renameOp(\''+o.id+'\')">Renomear</button><button class="mini dl" onclick="delOp(\''+o.id+'\')">Excluir</button></div>'; }).join("");
+  document.getElementById("msgOpName").textContent=opName(activeOp);
+}
+function addOperator(){ const n=document.getElementById("newOpName").value.trim(); if(!n){ toast("Informe o nome do operador","err"); return; } const obj={id:uid(),nome:n}; operators.push(obj); persistLocal(); document.getElementById("newOpName").value=""; setActiveOp(obj.id); toast("Operador adicionado",true); remoteUpsert("operators",obj); }
+function setActiveOp(id){ activeOp=id; localStorage.setItem(K_ACTIVE,activeOp); renderOpManage(); renderMsgs(); buildOpSelect(); }
+function renameOp(id){ const o=operators.find(x=>x.id===id); const n=prompt("Novo nome do operador:",o.nome); if(n&&n.trim()){ o.nome=n.trim(); persistLocal(); renderOpManage(); renderMsgs(); buildOpSelect(); remoteUpsert("operators",o); } }
+function delOp(id){ if(operators.length<=1){ toast("É preciso ter ao menos um operador","err"); return; } const o=operators.find(x=>x.id===id); if(!confirm('Excluir operador "'+o.nome+'" e suas mensagens?')) return;
+  operators=operators.filter(x=>x.id!==id); messages=messages.filter(m=>m.operadorId!==id); persistLocal();
+  if(activeOp===id) setActiveOp(operators[0].id); else { renderOpManage(); renderMsgs(); }
+  toast("Operador excluído",true); remoteDelete("operators",id);
+}
+function renderMsgs(){
+  const el=document.getElementById("msgList"); const msgs=messages.filter(m=>m.operadorId===activeOp);
+  if(!msgs.length){ el.innerHTML='<div style="font-size:13px;color:var(--muted);padding:8px 0">Nenhuma mensagem para este operador. Crie a primeira abaixo.</div>'; return; }
+  el.innerHTML=msgs.map(m=>{ const oc=OPERACAO_COLOR[m.operacao]||"#6b7688"; const vt=m.veiculo?'<span class="tag" style="background:'+(TYPE_COLOR[m.veiculo]||"#94a3b8")+'">🚚 '+esc(m.veiculo)+'</span>':"";
+    return '<div class="msg-card"><div class="mh"><span class="mt">'+esc(m.titulo)+'</span><span class="tags"><span class="tag" style="background:'+oc+'">'+esc(m.operacao)+'</span>'+vt+'</span></div><div class="tx">'+esc(m.texto)+'</div><div class="mact"><button onclick="openMsgForm(\''+m.id+'\')">Editar</button><button class="dl" onclick="delMsg(\''+m.id+'\')">Excluir</button></div></div>'; }).join("");
+}
+function openMsgForm(id){
+  editingMsgId=id; const m=id?messages.find(x=>x.id===id):{};
+  document.getElementById("msgFormTitle").textContent=id?"Editar mensagem":"Nova mensagem — "+opName(activeOp);
+  document.getElementById("m_titulo").value=m.titulo||""; document.getElementById("m_texto").value=m.texto||"";
+  fillSelect(document.getElementById("m_operacao"),OPERACOES,m.operacao||"Cotação de frete","");
+  fillTypeSelect(document.getElementById("m_veiculo"),m.veiculo||"");
+  document.getElementById("msgFormOverlay").classList.add("show");
+}
+function closeMsgForm(){ document.getElementById("msgFormOverlay").classList.remove("show"); editingMsgId=null; }
+function insPH(ph){ const t=document.getElementById("m_texto"); const s=t.selectionStart||t.value.length; t.value=t.value.slice(0,s)+ph+t.value.slice(t.selectionEnd||s); t.focus(); t.selectionStart=t.selectionEnd=s+ph.length; }
+function saveMsg(){
+  const titulo=document.getElementById("m_titulo").value.trim(), texto=document.getElementById("m_texto").value.trim();
+  if(!titulo){ toast("Informe o título","err"); return; } if(!texto){ toast("Escreva a mensagem","err"); return; }
+  const d={titulo,texto,operacao:document.getElementById("m_operacao").value,veiculo:document.getElementById("m_veiculo").value,operadorId:activeOp};
+  let obj; if(editingMsgId){ obj=Object.assign(messages.find(x=>x.id===editingMsgId),d); } else { obj=Object.assign({id:uid()},d); messages.push(obj); }
+  persistLocal(); closeMsgForm(); renderMsgs(); renderOpManage(); toast("Mensagem salva",true); remoteUpsert("messages",obj);
+}
+function delMsg(id){ if(!confirm("Excluir esta mensagem?")) return; messages=messages.filter(x=>x.id!==id); persistLocal(); renderMsgs(); renderOpManage(); toast("Mensagem excluída",true); remoteDelete("messages",id); }
+
+/* ============ SEGMENTOS & TIPOS DE VEÍCULO (personalizáveis) ============ */
+function renderSegManage(){
+  const el=document.getElementById("segManageList"); if(!el) return;
+  const counts={}; contacts.forEach(c=>{ if(c.segmento) counts[c.segmento]=(counts[c.segmento]||0)+1; });
+  el.innerHTML=SEGMENTS.map((s,i)=>'<div class="op-item"><div class="av" style="background:'+s.color+'">'+esc((initials(s.nome)||"?").toUpperCase())+'</div>'+
+    '<div class="nm">'+esc(s.nome)+' <span style="font-weight:400;color:var(--muted);font-size:12px">('+(counts[s.nome]||0)+' contato)</span></div>'+
+    '<button class="mini" onclick="renameSegment('+i+')">Renomear</button><button class="mini dl" onclick="delSegment('+i+')">Excluir</button></div>').join("")||'<div style="font-size:13px;color:var(--muted);padding:6px 0">Nenhum segmento.</div>';
+}
+function addSegment(){
+  const inp=document.getElementById("newSegName"); const n=(inp.value||"").trim();
+  if(!n){ toast("Informe o nome do segmento","err"); return; }
+  if(SEGMENTS.some(s=>normalize(s.nome)===normalize(n))){ toast("Esse segmento já existe","err"); return; }
+  SEGMENTS.push({nome:n,color:pickColor(SEGMENTS.length)}); rebuildColors(); persistLocal();
+  inp.value=""; renderSegManage(); refresh(); toast("Segmento adicionado",true); remoteConfig();
+}
+function renameSegment(i){
+  const s=SEGMENTS[i]; if(!s) return; const n=prompt("Novo nome do segmento:",s.nome); if(!n||!n.trim()) return; const nome=n.trim();
+  if(SEGMENTS.some((x,j)=>j!==i&&normalize(x.nome)===normalize(nome))){ toast("Já existe um segmento com esse nome","err"); return; }
+  const old=s.nome; s.nome=nome; contacts.forEach(c=>{ if(c.segmento===old){ c.segmento=nome; if(CLOUD) remoteUpsert("contacts",c); } });
+  rebuildColors(); persistLocal(); renderSegManage(); refresh(); toast("Segmento renomeado",true); remoteConfig();
+}
+function delSegment(i){
+  const s=SEGMENTS[i]; if(!s) return; const usados=contacts.filter(c=>c.segmento===s.nome).length;
+  if(!confirm('Excluir o segmento "'+s.nome+'"?'+(usados?' '+usados+' contato(s) ficarão sem esse segmento.':''))) return;
+  SEGMENTS.splice(i,1); rebuildColors(); persistLocal(); renderSegManage(); refresh(); toast("Segmento excluído",true); remoteConfig();
+}
+function fillVtGroupSelect(){
+  const sel=document.getElementById("newVtGroup"); if(!sel) return;
+  sel.innerHTML=VEHICLE_GROUPS.map((g,i)=>'<option value="'+i+'"'+(g.group==="Personalizados"?" selected":"")+'>'+esc(g.group)+'</option>').join("");
+}
+function renderVtypeManage(){
+  const el=document.getElementById("vtypeManageList"); if(!el) return;
+  const counts={}; contacts.forEach(c=>{ if(c.tipo) counts[c.tipo]=(counts[c.tipo]||0)+1; });
+  let html="";
+  VEHICLE_GROUPS.forEach((g,gi)=>{ html+='<div class="g-head" style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;padding:8px 2px 4px">'+esc(g.group)+'</div>';
+    if(!g.types.length){ html+='<div style="font-size:12px;color:#bbb;padding:2px 4px 6px">— nenhum —</div>'; }
+    g.types.forEach((t,ti)=>{ html+='<div class="op-item" style="padding:7px 12px"><span class="dot" style="width:11px;height:11px;border-radius:50%;background:'+g.color+';flex-shrink:0"></span>'+
+      '<div class="nm">'+esc(t)+' <span style="font-weight:400;color:var(--muted);font-size:12px">('+(counts[t]||0)+')</span></div>'+
+      '<button class="mini" onclick="renameVtype('+gi+','+ti+')">Renomear</button><button class="mini dl" onclick="delVtype('+gi+','+ti+')">Excluir</button></div>'; });
+  });
+  el.innerHTML=html;
+}
+function addVtype(){
+  const inp=document.getElementById("newVtName"); const sel=document.getElementById("newVtGroup");
+  const n=(inp.value||"").trim(); const gi=parseInt(sel.value,10);
+  if(!n){ toast("Informe o nome do tipo de veículo","err"); return; }
+  if(isNaN(gi)||!VEHICLE_GROUPS[gi]){ toast("Escolha um grupo","err"); return; }
+  if(VEHICLE_GROUPS.some(g=>g.types.some(t=>normalize(t)===normalize(n)))){ toast("Esse tipo já existe","err"); return; }
+  VEHICLE_GROUPS[gi].types.push(n); rebuildColors(); persistLocal();
+  inp.value=""; renderVtypeManage(); refresh(); toast("Tipo de veículo adicionado",true); remoteConfig();
+}
+function renameVtype(gi,ti){
+  const g=VEHICLE_GROUPS[gi]; if(!g) return; const old=g.types[ti]; if(old==null) return;
+  const n=prompt("Novo nome do tipo de veículo:",old); if(!n||!n.trim()) return; const nome=n.trim();
+  if(VEHICLE_GROUPS.some(gr=>gr.types.some(t=>normalize(t)===normalize(nome)&&t!==old))){ toast("Já existe um tipo com esse nome","err"); return; }
+  g.types[ti]=nome; contacts.forEach(c=>{ if(c.tipo===old){ c.tipo=nome; if(CLOUD) remoteUpsert("contacts",c); } });
+  rebuildColors(); persistLocal(); renderVtypeManage(); refresh(); toast("Tipo renomeado",true); remoteConfig();
+}
+function delVtype(gi,ti){
+  const g=VEHICLE_GROUPS[gi]; if(!g) return; const t=g.types[ti]; if(t==null) return;
+  const usados=contacts.filter(c=>c.tipo===t).length;
+  if(!confirm('Excluir o tipo "'+t+'"?'+(usados?' '+usados+' contato(s) ficarão sem esse tipo.':''))) return;
+  g.types.splice(ti,1); rebuildColors(); persistLocal(); renderVtypeManage(); refresh(); toast("Tipo excluído",true); remoteConfig();
+}
+
+/* ============ IMPORTAÇÃO ============ */
+function openImport(){ document.getElementById("importOverlay").classList.add("show"); document.getElementById("fileInput").value=""; }
+function closeImport(){ document.getElementById("importOverlay").classList.remove("show"); }
+const dz=document.getElementById("dropzone"), fileInput=document.getElementById("fileInput");
+dz.addEventListener("click",()=>fileInput.click());
+dz.addEventListener("dragover",e=>{e.preventDefault();dz.classList.add("drag");});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{e.preventDefault();dz.classList.remove("drag");handleFiles(e.dataTransfer.files);});
+fileInput.addEventListener("change",e=>handleFiles(e.target.files));
+async function handleFiles(files){ let all=[]; for(const f of files){ const text=await f.text(); const nm=f.name.toLowerCase(); all=all.concat((nm.endsWith(".vcf")||/BEGIN:VCARD/i.test(text))?parseVCF(text):parseCSV(text)); } if(!all.length){ toast("Nenhum contato encontrado no arquivo","err"); return; } showPreview(all); }
+function parseVCF(text){
+  const cards=text.split(/BEGIN:VCARD/i).slice(1), out=[];
+  cards.forEach(block=>{ const raw=block.split(/\r?\n/), lines=[]; raw.forEach(l=>{ if(/^[ \t]/.test(l)&&lines.length) lines[lines.length-1]+=l.replace(/^[ \t]/,""); else lines.push(l); });
+    let fn="",tel="",email="",org="",city="",uf="",note="";
+    lines.forEach(line=>{ const idx=line.indexOf(":"); if(idx<0) return; let key=line.slice(0,idx).toUpperCase(), val=line.slice(idx+1); const base=key.split(";")[0];
+      if(/ENCODING=QUOTED-PRINTABLE/i.test(key)) val=decodeQP(val); val=val.replace(/\\n/g,", ").replace(/\\,/g,",").replace(/\\;/g,";").trim();
+      if(base==="FN") fn=val; else if(base==="N"&&!fn){ const p=val.split(";"); fn=[p[1],p[0]].filter(Boolean).join(" ").trim(); }
+      else if(base==="TEL"&&!tel) tel=val; else if(base==="EMAIL"&&!email) email=val; else if(base==="ORG"&&!org) org=val.split(";")[0];
+      else if(base==="ADR"&&!city){ const p=val.split(";"); city=p[3]||""; uf=(p[4]||"").toUpperCase().slice(0,2); } else if(base==="NOTE") note=val; });
+    if(!fn&&!tel) return;
+    out.push({nome:fn,tel,email,empresa:org,cidade:city,uf:UFS.indexOf(uf)>=0?uf:"",obs:note,tipo:guessType(org+" "+note),segmento:guessSegment(fn+" "+org+" "+note+" "+email)}); });
+  return out;
+}
+function decodeQP(s){ try{ const b=[]; s=s.replace(/=\r?\n/g,""); for(let i=0;i<s.length;i++){ if(s[i]==="="){ b.push(parseInt(s.substr(i+1,2),16)); i+=2; } else b.push(s.charCodeAt(i)); } return new TextDecoder("utf-8").decode(new Uint8Array(b)); }catch(e){ return s; } }
+function parseCSV(text){
+  const rows=csvRows(text); if(rows.length<2) return []; const headers=rows[0].map(h=>normalize(h));
+  function fk(){ const ks=[].slice.call(arguments); for(const k of ks){ const i=headers.findIndex(h=>h.indexOf(k)>=0); if(i>=0) return i; } return -1; }
+  const iFirst=fk("first name","given name"), iLast=fk("last name","family name"), iName=fk("display name","name","nome","contact");
+  const iPhone=fk("phone 1 - value","mobile","celular","phone","telefone","tel"), iEmail=fk("e-mail 1 - value","email","e-mail","mail");
+  const iOrg=fk("organization name","organization 1 - name","company","empresa","organiza"), iCity=fk("address 1 - city","city","cidade");
+  const iState=fk("address 1 - region","state","estado","region","uf"), iNote=fk("notes","note","obs","observ");
+  const out=[];
+  for(let r=1;r<rows.length;r++){ const row=rows[r]; if(!row.length||row.every(c=>!c.trim())) continue;
+    let nome=""; if(iFirst>=0||iLast>=0) nome=[(row[iFirst]||""),(row[iLast]||"")].join(" ").trim(); if(!nome&&iName>=0) nome=(row[iName]||"").trim();
+    const tel=iPhone>=0?(row[iPhone]||"").split(/ ::: |:::/)[0].split(";")[0].trim():"";
+    const email=iEmail>=0?(row[iEmail]||"").split(/ ::: |:::/)[0].split(";")[0].trim():"";
+    const org=iOrg>=0?(row[iOrg]||"").trim():"", city=iCity>=0?(row[iCity]||"").trim():"";
+    let uf=iState>=0?(row[iState]||"").trim().toUpperCase().slice(0,2):""; const note=iNote>=0?(row[iNote]||"").trim():"";
+    if(!nome&&!tel) continue;
+    out.push({nome,tel,email,empresa:org,cidade:city,uf:UFS.indexOf(uf)>=0?uf:"",obs:note,tipo:guessType(org+" "+note),segmento:guessSegment(nome+" "+org+" "+note+" "+email)}); }
+  return out;
+}
+function csvRows(text){
+  const rows=[]; let row=[],cur="",q=false; const fl=text.split("\n")[0]; const sep=((fl.match(/;/g)||[]).length>(fl.match(/,/g)||[]).length)?";":",";
+  for(let i=0;i<text.length;i++){ const ch=text[i];
+    if(q){ if(ch==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else{ if(ch==='"') q=true; else if(ch===sep){ row.push(cur);cur=""; } else if(ch==="\n"){ row.push(cur);rows.push(row);row=[];cur=""; } else if(ch!=="\r") cur+=ch; } }
+  if(cur!==""||row.length){ row.push(cur); rows.push(row); } return rows;
+}
+let pending=[];
+function showPreview(list){
+  pending=list; const body=document.getElementById("importBody");
+  const dup=list.filter(c=>contacts.some(e=>digits(e.tel)&&digits(e.tel)===digits(c.tel))).length;
+  const cls=list.filter(c=>c.segmento).length;
+  body.innerHTML='<div style="font-size:14px;margin-bottom:6px"><b>'+list.length+'</b> contato(s) encontrados &middot; <span style="color:var(--green)">'+cls+' auto-classificados</span>'+(dup?' &middot; <span style="color:var(--orange)">'+dup+' duplicado(s)</span>':"")+'.</div>'+
+    '<label style="font-size:13px;display:flex;align-items:center;gap:7px;margin:8px 0"><input type="checkbox" id="skipDup" checked> Ignorar telefones já cadastrados</label>'+
+    '<div class="preview-wrap"><table class="preview-table"><thead><tr><th>Nome</th><th>Telefone</th><th>Segmento</th><th>Empresa</th></tr></thead><tbody>'+
+    list.slice(0,60).map(c=>'<tr><td>'+esc(c.nome)+'</td><td>'+esc(fmtPhone(c.tel))+'</td><td>'+(c.segmento?'<span style="color:'+(SEG_COLOR[c.segmento]||"#888")+';font-weight:600">'+esc(c.segmento)+'</span>':'<span style="color:#bbb">—</span>')+'</td><td>'+esc(c.empresa)+'</td></tr>').join("")+'</tbody></table></div>'+
+    (list.length>60?'<p style="font-size:11px;color:var(--muted);margin-top:6px">Mostrando 60 de '+list.length+'.</p>':"")+
+    '<div class="m-foot" style="padding:16px 0 0"><button class="btn btn-ghost" onclick="closeImport();openImport()">Voltar</button><button class="btn btn-primary" onclick="confirmImport()">Importar '+list.length+' contato(s)</button></div>';
+}
+async function confirmImport(){
+  const skipEl=document.getElementById("skipDup"), skip=skipEl?skipEl.checked:false;
+  const novos=[];
+  pending.forEach(c=>{ if(skip&&digits(c.tel)&&contacts.some(e=>digits(e.tel)===digits(c.tel))) return; novos.push({id:uid(),nome:c.nome||"Sem nome",tel:c.tel||"",email:c.email||"",empresa:c.empresa||"",segmento:c.segmento||"",tipo:c.tipo||"",cidade:c.cidade||"",uf:c.uf||"",peso:"",cubagem:"",paletes:"",obs:c.obs||""}); });
+  contacts=contacts.concat(novos); persistLocal(); closeImport(); refresh(); toast(novos.length+" contato(s) importado(s)",true);
+  if(CLOUD && novos.length){ setCloud("loading"); try{ await remoteBulk("contacts",novos); refresh(); }catch(e){ setCloud("err"); toast("Importado localmente; falha ao enviar à base","err"); } }
+}
+
+/* ============ PAINEL / PLANILHA ============ */
+const SHEET_COLS=[
+  {key:"nome",label:"Nome",type:"text"},
+  {key:"tel",label:"Telefone",type:"text"},
+  {key:"email",label:"E-mail",type:"text"},
+  {key:"empresa",label:"Empresa",type:"text"},
+  {key:"segmento",label:"Segmento",type:"seg"},
+  {key:"tipo",label:"Tipo de veículo",type:"tipo"},
+  {key:"cidade",label:"Cidade",type:"text"},
+  {key:"uf",label:"UF",type:"uf"},
+  {key:"peso",label:"Peso máx (kg)",type:"num"},
+  {key:"cubagem",label:"Cubagem (m³)",type:"num"},
+  {key:"paletes",label:"Qtd paletes",type:"num"},
+  {key:"obs",label:"Observações",type:"text"}
+];
+function colW(col){ if(col.key==="obs") return "240px"; if(col.type==="num") return "115px"; if(col.type==="uf") return "72px"; if(col.type==="seg"||col.type==="tipo") return "175px"; if(col.key==="email") return "200px"; if(col.key==="nome"||col.key==="empresa") return "175px"; return "150px"; }
+function segOptionsHtml(val){ let h='<option value="">—</option>'; if(val&&!SEGMENTS.some(s=>s.nome===val)) h+='<option selected>'+esc(val)+'</option>'; SEGMENTS.forEach(s=>h+='<option'+(val===s.nome?' selected':'')+'>'+esc(s.nome)+'</option>'); return h; }
+function tipoOptionsHtml(val){ let h='<option value="">—</option>'; if(val&&!VEHICLE_GROUPS.some(g=>g.types.indexOf(val)>=0)) h+='<option selected>'+esc(val)+'</option>'; VEHICLE_GROUPS.forEach(g=>{ if(!g.types.length) return; h+='<optgroup label="'+esc(g.group)+'">'; g.types.forEach(t=>h+='<option'+(val===t?' selected':'')+'>'+esc(t)+'</option>'); h+='</optgroup>'; }); return h; }
+function ufOptionsHtml(val){ let h='<option value="">—</option>'; if(val&&UFS.indexOf(val)<0) h+='<option selected>'+esc(val)+'</option>'; UFS.forEach(u=>h+='<option'+(val===u?' selected':'')+'>'+u+'</option>'); return h; }
+function sheetPopulateFilters(){
+  document.getElementById("sheetFilterSeg").innerHTML='<option value="">Todos os segmentos</option><option value="__none__">— Sem segmento —</option>'+SEGMENTS.map(s=>'<option>'+esc(s.nome)+'</option>').join("");
+  const allTypes=[]; VEHICLE_GROUPS.forEach(g=>g.types.forEach(t=>allTypes.push(t)));
+  document.getElementById("sheetFilterTipo").innerHTML='<option value="">Todos os tipos</option><option value="__none__">— Sem tipo —</option>'+allTypes.map(t=>'<option>'+esc(t)+'</option>').join("");
+}
+function sheetFilteredList(){
+  const raw=document.getElementById("sheetSearch").value; const q=normalize(raw), dq=digits(raw);
+  const fseg=document.getElementById("sheetFilterSeg").value, ftipo=document.getElementById("sheetFilterTipo").value, inc=document.getElementById("sheetOnlyIncomplete").value;
+  return contacts.filter(c=>{
+    if(fseg){ if(fseg==="__none__"){ if(c.segmento) return false; } else if(c.segmento!==fseg) return false; }
+    if(ftipo){ if(ftipo==="__none__"){ if(c.tipo) return false; } else if(c.tipo!==ftipo) return false; }
+    if(inc==="1" && c.segmento && c.tipo) return false;
+    if(q){ const hay=normalize([c.nome,c.empresa,c.cidade,c.email,c.obs].join(" ")); if(!hay.includes(q) && !(dq && digits(c.tel).includes(dq))) return false; }
+    return true;
+  }).sort((a,b)=>(a.nome||"").localeCompare(b.nome||"","pt"));
+}
+let sheetSelected=new Set();
+function sheetRow(c){
+  const sel=sheetSelected.has(c.id);
+  return '<tr data-id="'+c.id+'"'+(sel?' class="selrow"':'')+'><td class="csel"><input type="checkbox" class="rowsel" data-id="'+c.id+'"'+(sel?' checked':'')+'></td>'+
+    '<td class="cdel"><button class="sheet-del" title="Excluir contato" onclick="delRowSheet(\''+c.id+'\')">&times;</button></td>'+SHEET_COLS.map(col=>{
+    const v=c[col.key]==null?"":c[col.key]; let cell;
+    if(col.type==="seg") cell='<select data-f="segmento">'+segOptionsHtml(v)+'</select>';
+    else if(col.type==="tipo") cell='<select data-f="tipo">'+tipoOptionsHtml(v)+'</select>';
+    else if(col.type==="uf") cell='<select data-f="uf">'+ufOptionsHtml(v)+'</select>';
+    else if(col.type==="num") cell='<input data-f="'+col.key+'" type="number" min="0" step="any" value="'+esc(v)+'">';
+    else cell='<input data-f="'+col.key+'" type="text" value="'+esc(v)+'">';
+    const cls=col.type==="num"?"cnum":(col.key==="nome"?"cnome":"");
+    return '<td class="'+cls+'">'+cell+'</td>';
+  }).join("")+'</tr>';
+}
+function renderSheet(){
+  const list=sheetFilteredList();
+  document.getElementById("sheetCount").textContent=list.length+" de "+contacts.length+" contato(s)";
+  const th='<thead><tr><th class="csel"><input type="checkbox" id="sheetSelAll" title="Selecionar todos os visíveis"></th><th style="min-width:44px"></th>'+SHEET_COLS.map(col=>'<th style="min-width:'+colW(col)+'">'+esc(col.label)+'</th>').join("")+'</tr></thead>';
+  const tb='<tbody>'+(list.length?list.map(sheetRow).join(""):'<tr><td colspan="'+(SHEET_COLS.length+2)+'" style="padding:24px;text-align:center;color:var(--muted)">Nenhum contato para os filtros atuais.</td></tr>')+'</tbody>';
+  document.getElementById("sheetTable").innerHTML=th+tb;
+  updateBulkBar();
+}
+function updateBulkBar(){
+  const n=sheetSelected.size, bar=document.getElementById("sheetBulkBar");
+  if(bar){ bar.style.display=n?"flex":"none"; const cc=document.getElementById("sheetSelCount"); if(cc) cc.textContent=n+" selecionado(s)"; }
+  const list=sheetFilteredList(), sa=document.getElementById("sheetSelAll");
+  if(sa){ const all=list.length>0&&list.every(c=>sheetSelected.has(c.id)); sa.checked=all; sa.indeterminate=!all&&list.some(c=>sheetSelected.has(c.id)); }
+}
+function toggleSelAll(check){
+  const list=sheetFilteredList();
+  list.forEach(c=>{ if(check) sheetSelected.add(c.id); else sheetSelected.delete(c.id); });
+  renderSheet();
+}
+function clearSheetSelection(){ sheetSelected.clear(); renderSheet(); }
+async function deleteSelectedSheet(){
+  const ids=[...sheetSelected]; if(!ids.length) return;
+  if(!confirm('Excluir '+ids.length+' contato(s) selecionado(s)? Esta ação não pode ser desfeita.')) return;
+  const idset=new Set(ids);
+  contacts=contacts.filter(c=>!idset.has(c.id));
+  sheetSelected.clear(); persistLocal(); renderSheet();
+  toast(ids.length+' contato(s) excluído(s)',true);
+  if(CLOUD){ setCloud("loading"); busy=true; try{ for(const id of ids){ try{ await api("delete",{entity:"contacts",id}); }catch(e){} } setCloud("on"); }finally{ busy=false; } try{ await syncPull(false); }catch(e){} }
+  refresh();
+}
+function sheetEditFromEvent(e){
+  const el=e.target;
+  if(el.id==="sheetSelAll"){ toggleSelAll(el.checked); return; }
+  if(el.classList && el.classList.contains("rowsel")){ const id=el.getAttribute("data-id"); if(el.checked) sheetSelected.add(id); else sheetSelected.delete(id); const tr=el.closest("tr"); if(tr) tr.classList.toggle("selrow",el.checked); updateBulkBar(); return; }
+  const f=el.getAttribute && el.getAttribute("data-f"); if(!f) return;
+  const tr=el.closest("tr"); if(!tr) return; const id=tr.getAttribute("data-id"); const c=contacts.find(x=>x.id===id); if(!c) return;
+  let val=el.value; if(el.type!=="number") val=(val||"").trim();
+  if(c[f]===val) return;
+  c[f]=val; persistLocal(); if(CLOUD) remoteUpsert("contacts",c);
+}
+function openSheet(){ sheetSelected.clear(); sheetPopulateFilters(); document.getElementById("sheetOverlay").classList.add("show"); renderSheet(); document.getElementById("sheetSearch").focus(); }
+function closeSheet(){ document.getElementById("sheetOverlay").classList.remove("show"); refresh(); }
+function addRowSheet(){
+  const c={id:uid(),nome:"",tel:"",email:"",empresa:"",segmento:"",tipo:"",cidade:"",uf:"",peso:"",cubagem:"",paletes:"",obs:""};
+  contacts.push(c); persistLocal(); renderSheet();
+  const tr=document.querySelector('#sheetTable tr[data-id="'+c.id+'"]'); if(tr){ tr.scrollIntoView({block:"center"}); const inp=tr.querySelector('input'); if(inp) inp.focus(); }
+  if(CLOUD) remoteUpsert("contacts",c);
+}
+function delRowSheet(id){
+  const c=contacts.find(x=>x.id===id); if(!confirm('Excluir "'+((c&&c.nome)||"este contato")+'"?')) return;
+  contacts=contacts.filter(x=>x.id!==id); sheetSelected.delete(id); persistLocal(); renderSheet(); if(CLOUD) remoteDelete("contacts",id);
+}
+document.getElementById("sheetTable").addEventListener("change",sheetEditFromEvent);
+["sheetSearch","sheetFilterSeg","sheetFilterTipo","sheetOnlyIncomplete"].forEach(idv=>{ const el=document.getElementById(idv); el.addEventListener(idv==="sheetSearch"?"input":"change",renderSheet); });
+
+/* ============ EXPORTAR ============ */
+function exportCSV(){ if(!contacts.length){ toast("Nada para exportar","err"); return; } const head=["Nome","Telefone","Email","Empresa","Segmento","TipoVeiculo","Cidade","UF","PesoMaxKg","CubagemM3","QtdPaletes","Observacoes"]; const rows=contacts.map(c=>[c.nome,c.tel,c.email,c.empresa,c.segmento,c.tipo,c.cidade,c.uf,c.peso,c.cubagem,c.paletes,c.obs].map(v=>'"'+(v==null?"":String(v)).replace(/"/g,'""')+'"').join(",")); download("agenda-conjunta-portoex.csv","﻿"+head.join(",")+"\n"+rows.join("\n"),"text/csv"); }
+function exportVCF(){ if(!contacts.length){ toast("Nada para exportar","err"); return; } const v=contacts.map(c=>"BEGIN:VCARD\nVERSION:3.0\nFN:"+(c.nome||"")+"\nTEL;TYPE=CELL:"+(c.tel||"")+"\n"+(c.email?"EMAIL:"+c.email+"\n":"")+(c.empresa?"ORG:"+c.empresa+"\n":"")+((c.cidade||c.uf)?"ADR:;;;"+(c.cidade||"")+";"+(c.uf||"")+";;\n":"")+"NOTE:"+[c.segmento,c.tipo,c.obs].filter(Boolean).join(" - ")+"\nEND:VCARD").join("\n"); download("agenda-conjunta-portoex.vcf",v,"text/vcard"); }
+function download(name,content,type){ const b=new Blob([content],{type}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name; a.click(); URL.revokeObjectURL(a.href); toast("Arquivo exportado",true); }
+
+/* ============ TOAST ============ */
+let toastT;
+function toast(msg,kind){ const t=document.getElementById("toast"); t.textContent=msg; t.className="toast show"+(kind===true?" ok":kind==="err"?" err":""); clearTimeout(toastT); toastT=setTimeout(()=>t.className="toast",2800); }
+
+/* ============ INIT ============ */
+["editOverlay","importOverlay","settingsOverlay","msgFormOverlay","waOverlay","sheetOverlay"].forEach(idv=>{ document.getElementById(idv).addEventListener("click",e=>{ if(e.target.id===idv){ e.target.classList.remove("show"); if(idv==="settingsOverlay"||idv==="sheetOverlay") refresh(); } }); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") document.querySelectorAll(".overlay.show").forEach(o=>o.classList.remove("show")); });
+async function boot(){
+  if(CLOUD){ setCloud("loading");
+    try{ const d=await cloudLoad(); applyData(d); setCloud("on"); }
+    catch(e){ setCloud("err"); toast("Sem conexão com a base — usando dados locais","err"); ensureLocalSeed(); }
+  } else { ensureLocalSeed(); setCloud("off"); }
+  refresh();
+  if(CLOUD){ setInterval(()=>{ if(!document.querySelector(".overlay.show")) syncPull(false); }, 25000); window.addEventListener("focus",()=>syncPull(false)); }
+}
+boot();
+</script>
+</body>
+</html>
